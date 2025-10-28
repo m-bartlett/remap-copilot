@@ -40,7 +40,7 @@ StandardError=journal
 WantedBy=default.target
 endef
 export SYSTEMD_SERVICE_TEMPLATE
-SYSTEMD_SERVICE_INSTALL_PATH := $(HOME)/.config/systemd/user/$(BINARY).service
+SYSTEMD_SERVICE_INSTALL_PATH = $(HOME)/.config/systemd/user/$(BINARY).service
 
 
 
@@ -63,21 +63,27 @@ $(TARGET): $(OBJECTS)
 	@echo "Build complete: $(TARGET)"
 
 $(SYSTEMD_SERVICE_INSTALL_PATH):
-	@mkdir -pv "$$(dirname $(SYSTEMD_SERVICE_INSTALL_PATH))"
-	@echo "$$SYSTEMD_SERVICE_TEMPLATE" > "$(SYSTEMD_SERVICE_INSTALL_PATH)"
-	@systemctl --user daemon-reload
-	@echo "Installed $(SYSTEMD_SERVICE_INSTALL_PATH)"
-	@echo -e "Try:\n\tsystemctl --user start $(BINARY)"
-	@echo -e "\tsystemctl --user enable --now $(BINARY)"
+	@if [ $$EUID == 0 ]; then \
+		echo "Install systemd service without root privileges."; \
+	 else \
+		 mkdir -pv "$$(dirname $(SYSTEMD_SERVICE_INSTALL_PATH))"; \
+		 echo "$$SYSTEMD_SERVICE_TEMPLATE" > "$(SYSTEMD_SERVICE_INSTALL_PATH)"; \
+		 systemctl --user daemon-reload; \
+		 echo "Installed $(SYSTEMD_SERVICE_INSTALL_PATH)"; \
+		 echo -e "Try:\n\tsystemctl --user start $(BINARY)"; \
+		 echo -e "\tsystemctl --user enable --now $(BINARY)"; \
+	 fi
 
 clean:
 	@rm -rfv $(BUILD_DIR)
 
-install: $(TARGET)
+$(INSTALL_TARGET): $(TARGET)
 	@install --mode=0755 $(TARGET) $(INSTALL_TARGET)
 	@echo "Installed $(INSTALL_TARGET)"
 
-install-systemd: install $(SYSTEMD_SERVICE_INSTALL_PATH)
+target: $(INSTALL_TARGET)
+
+install-systemd: $(INSTALL_TARGET) $(SYSTEMD_SERVICE_INSTALL_PATH)
 
 uninstall-systemd:
 	@if [ -f "$(SYSTEMD_SERVICE_INSTALL_PATH)" ]; then \
@@ -86,6 +92,8 @@ uninstall-systemd:
 		rm -fv $(SYSTEMD_SERVICE_INSTALL_PATH); \
 		systemctl --user daemon-reload; \
 		echo "Uninstalled $(BINARY) systemd service."; \
+	 else \
+	 	echo "$(BINARY) systemd service not installed."; \
 	 fi
 
 uninstall: uninstall-systemd
