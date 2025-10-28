@@ -59,8 +59,8 @@ key to combine with the substituted modifier key.
 >     --delay $copilot_sub_key:0 period=0.3 \
 >     --output name="kbd-no-copilot" create-link="kbd-no-copilot"
 > ```
-> This tool is more robust and enables arbitrary complex substitutions.
-> However, I found that the virtual device circumvented keyboard mappings and rules in my desktop environment,
+> `evsieve` is more robust and enables arbitrary complex substitutions.
+> However, I found that its virtual device circumvented keyboard mappings and rules in my desktop environment,
 > for example it prevented **disabling the touchpad while typing** despite having this option explicitly configured.
 > Hence, I opted to write this tool as a more useful solution.
 
@@ -121,7 +121,7 @@ Try:
         systemctl --user start remap-copilot
         systemctl --user enable --now remap-copilot
 $ systemctl --user enable --now remap-copilot.service
-Created symlink '~/.config/systemd/user/default.target.wants/remap-copilot.service' → '~/.config/systemd/user/remap-copilot.service'.
+Created symlink '~/.config/systemd/user/default.target.wants/remap-copilot.service'
 ```
 Installs a user systemd service that ensures an instance of this program is always running.
 
