@@ -1,6 +1,27 @@
-# Copilot Key Remapper
+<div>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/13984090-9eff-4e4e-94c3-e22282f621aa">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/9498933e-4cfa-4deb-aebf-6e0df33db365">
+    <img
+      align="left"
+      width="75"
+      alt="nopilot"
+      src="https://github.com/user-attachments/assets/9498933e-4cfa-4deb-aebf-6e0df33db365">
+  </picture>
+  <h3>
+    <span><h3>
+    <span><h3>
+    <span><h3>
+      <span><h3>Copilot Key Remapper</h3></span>
+    </h3></span>
+    </h3></span>
+    </h3></span>
+  </h3>
+</div>
 
-Remap the Windows Copilot key (Meta+Shift+F23) to Right Control on Linux.
+---
+
+Remap the Windows Copilot key (Meta+Shift+F23) to Right Control on Linux
 
 ## Features
 
