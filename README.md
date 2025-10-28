@@ -4,7 +4,7 @@
     <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/9498933e-4cfa-4deb-aebf-6e0df33db365">
     <img
       align="left"
-      width="75"
+      width="65"
       alt="nopilot"
       src="https://github.com/user-attachments/assets/9498933e-4cfa-4deb-aebf-6e0df33db365">
   </picture>
