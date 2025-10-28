@@ -19,9 +19,11 @@
   </h3>
 </div>
 
----
+Lightweight daemon that substitutes the Copilot key's hardwired shortcut in a evdev device stream with another key.
 
-Remap the Windows Copilot key (Meta+Shift+F23) to Right Control on Linux
+The default substitution key is <kbd>RightControl</kbd>, but see [Use a different key than right control](#use-a-different-key-than-right-control) for info on sending an alternative key.
+
+<br/>
 
 ## Features
 
