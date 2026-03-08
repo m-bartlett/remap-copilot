@@ -59,7 +59,7 @@ $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c | $(BUILD_DIR)
 $(OBJECTS): $(SOURCES) $(HEADERS) | $(BUILD_DIR)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@echo "Build complete: $(TARGET)"
 
 $(SYSTEMD_SERVICE_INSTALL_PATH):
