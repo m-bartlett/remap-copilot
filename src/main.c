@@ -344,6 +344,11 @@ int main(int argc, char **argv) {
                 if (key_state.meta_pressed && key_state.shift_pressed) {
                     if (event.value == KEY_PRESSED) {
                         cancel_delayed_release();
+                        /* Undo the meta+shift that were already passed through */
+                        libevdev_uinput_write_event(uidev, EV_KEY, KEY_LEFTMETA, 0);
+                        libevdev_uinput_write_event(uidev, EV_KEY, KEY_LEFTSHIFT, 0);
+                        libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
+                        /* Now emit the substitute key */
                         libevdev_uinput_write_event(uidev, EV_KEY, COPILOT_REPLACE_KEY, 1);
                         libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
                         key_state.copilot_active = true;
