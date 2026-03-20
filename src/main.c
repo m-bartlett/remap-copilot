@@ -45,6 +45,7 @@ static struct {
     bool meta_pressed:   1;
     bool shift_pressed:  1;
     bool copilot_active: 1;
+    bool meta_suppressed: 1;
 } key_state = {false};
 
 
@@ -63,7 +64,7 @@ void print_usage(const char *prog_name) {
 void list_devices(void) {
     char devpath[PATH_MAX];
     int fd;
-    struct libevdev *test_dev;
+    struct libevdev *test_dev = NULL;
     
     printf("Available input devices:\n");
     printf("%-20s %-40s %s\n", "Device", "Name", "Capabilities");
@@ -163,7 +164,7 @@ void cancel_delayed_release(void) {
 bool find_keyboard_device(char **path) {
     char devpath[PATH_MAX];
     int fd;
-    struct libevdev *test_dev;
+    struct libevdev *test_dev = NULL;
     bool return_value = false;
     
     // Try to find a device with F23
@@ -178,7 +179,7 @@ bool find_keyboard_device(char **path) {
             continue;
         }
         if (libevdev_has_event_code(test_dev, EV_KEY, KEY_F23)) goto keyboard_found;
-        libevdev_free(test_dev);
+        if (test_dev) libevdev_free(test_dev);
         close(fd);
     }
     
@@ -334,11 +335,24 @@ int main(int argc, char **argv) {
             switch (event.code) {
             case KEY_LEFTMETA:
                 key_state.meta_pressed = (event.value != KEY_RELEASED);
-                if (key_state.copilot_active) goto skip_event_write;
-                break;
+                if (event.value == KEY_PRESSED) {
+                    // Hold meta - don't send yet, wait to see if shift+F23 follows
+                    key_state.meta_suppressed = true;
+                    goto skip_event_write;
+                } else {
+                    // Meta released
+                    if (key_state.meta_suppressed && !key_state.copilot_active) {
+                        // Was a genuine Super tap - send both down and up now
+                        libevdev_uinput_write_event(uidev, EV_KEY, KEY_LEFTMETA, 1);
+                        libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
+                    }
+                    key_state.meta_suppressed = false;
+                    if (key_state.copilot_active) goto skip_event_write;
+                    break;
+                }
             case KEY_LEFTSHIFT:
                 key_state.shift_pressed = (event.value != KEY_RELEASED);
-                if (key_state.copilot_active) goto skip_event_write;
+                if (key_state.meta_pressed || key_state.copilot_active) goto skip_event_write;
                 break;
             case KEY_F23:
                 if (key_state.meta_pressed && key_state.shift_pressed) {
